@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Controle de Entregas e Ocorrências</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+<!-- SheetJS: lê e escreve XLSX/CSV direto no navegador -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+</head>
+<body>
+
+<div id="avisos" class="avisos" aria-live="polite"></div>
+
+<!-- ===================== LOGIN ===================== -->
+<main id="tela-login" class="login">
+  <form id="form-login" class="login__cartao">
+    <p class="marca">Controle de Entregas</p>
+    <h1 class="login__titulo">Entre para registrar<br>ocorrências do dia</h1>
+
+    <label class="rotulo" for="login-email">E-mail corporativo</label>
+    <input id="login-email" class="entrada" type="email" autocomplete="username" required>
+
+    <label class="rotulo" for="login-senha">Senha</label>
+    <input id="login-senha" class="entrada" type="password" autocomplete="current-password" required>
+
+    <p id="login-erro" class="erro" role="alert"></p>
+
+    <button id="btn-entrar" class="botao botao--principal" type="submit">Entrar</button>
+    <button id="btn-esqueci" class="botao botao--texto" type="button">Esqueci minha senha</button>
+  </form>
+</main>
+
+<!-- ===================== APLICAÇÃO ===================== -->
+<div id="app" hidden>
+  <header class="topo">
+    <p class="marca">Controle de Entregas</p>
+    <div class="topo__usuario">
+      <span id="usuario-nome" class="mono"></span>
+      <button id="btn-sair" class="botao botao--texto" type="button">Sair</button>
+    </div>
+  </header>
+
+  <nav class="nav" aria-label="Módulos">
+    <button class="nav__item nav__item--ativo" data-ir="buscar" type="button"><span>Buscar NF</span><small>registrar ocorrência</small></button>
+    <button class="nav__item" data-ir="importar" type="button"><span>Importar</span><small>planilha do dia</small></button>
+    <button class="nav__item" data-ir="dashboard" type="button"><span>Ocorrências</span><small>painel e exportação</small></button>
+    <button class="nav__item" data-ir="retencao" type="button"><span>Retenção</span><small>carga por placa</small></button>
+  </nav>
+
+  <main class="conteudo">
+
+    <!-- ---------- BUSCAR NF / OCORRÊNCIA ---------- -->
+    <section class="vista" data-vista="buscar">
+      <h2 class="titulo">Buscar nota fiscal</h2>
+      <form id="form-busca" class="barra-busca">
+        <input id="busca-nf" class="entrada entrada--mono" type="text" placeholder="Número da NF" autocomplete="off" required>
+        <button id="btn-buscar" class="botao botao--principal" type="submit">Buscar</button>
+      </form>
+
+      <p id="busca-vazio" class="alerta" hidden></p>
+
+      <div id="resultado-busca" hidden>
+        <!-- assinatura visual: o canhoto da nota -->
+        <article class="canhoto">
+          <header class="canhoto__cabeca">
+            <span>Nota localizada</span>
+            <span class="canhoto__selo">base do dia</span>
+          </header>
+          <div id="nota-detalhe" class="canhoto__campos"></div>
+        </article>
+
+        <form id="form-ocorrencia" class="cartao">
+          <h3 class="titulo titulo--menor">Registrar ocorrência</h3>
+          <div class="grade-2">
+            <div>
+              <label class="rotulo" for="oco-motivo">Motivo</label>
+              <select id="oco-motivo" class="entrada" required></select>
+            </div>
+            <div>
+              <label class="rotulo" for="oco-obs">Observação (opcional)</label>
+              <input id="oco-obs" class="entrada" type="text" maxlength="300" placeholder="Detalhe o que aconteceu">
+            </div>
+          </div>
+          <button id="btn-salvar-oco" class="botao botao--principal" type="submit">Salvar e abrir no Outlook</button>
+        </form>
+
+        <div id="pos-salvar" class="cartao cartao--sutil" hidden>
+          <p>Rascunho enviado ao Outlook. Se a janela não abriu:</p>
+          <div class="linha-botoes">
+            <button id="btn-reabrir-outlook" class="botao" type="button">Reabrir no Outlook</button>
+            <button id="btn-copiar-email" class="botao botao--texto" type="button">Copiar e-mail como texto</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- IMPORTAR ---------- -->
+    <section class="vista" data-vista="importar" hidden>
+      <h2 class="titulo">Importar planilha do dia</h2>
+      <p class="apoio">Aceita .xlsx, .xls e .csv. A leitura acontece no seu computador; só os dados tratados vão para o banco. Reimportar o mesmo arquivo atualiza as notas existentes em vez de duplicar.</p>
+
+      <div class="cartao">
+        <label class="rotulo" for="arquivo">Arquivo</label>
+        <input id="arquivo" class="entrada" type="file" accept=".xlsx,.xls,.csv">
+        <div id="import-resumo" class="resumo"></div>
+        <p id="import-progresso" class="apoio mono"></p>
+        <button id="btn-importar" class="botao botao--principal" type="button" disabled>Gravar no banco</button>
+      </div>
+    </section>
+
+    <!-- ---------- DASHBOARD ---------- -->
+    <section class="vista" data-vista="dashboard" hidden>
+      <h2 class="titulo">Ocorrências registradas</h2>
+
+      <div class="filtros">
+        <div>
+          <label class="rotulo" for="filtro-inicio">De</label>
+          <input id="filtro-inicio" class="entrada" type="date">
+        </div>
+        <div>
+          <label class="rotulo" for="filtro-fim">Até</label>
+          <input id="filtro-fim" class="entrada" type="date">
+        </div>
+        <div>
+          <label class="rotulo" for="filtro-motivo">Motivo</label>
+          <select id="filtro-motivo" class="entrada"></select>
+        </div>
+        <div>
+          <label class="rotulo" for="filtro-usuario">Usuário</label>
+          <select id="filtro-usuario" class="entrada"><option value="">Todos os usuários</option></select>
+        </div>
+        <div class="filtros__acoes">
+          <button id="btn-atualizar" class="botao botao--principal" type="button">Atualizar</button>
+          <button id="btn-limpar-filtros" class="botao botao--texto" type="button">Limpar</button>
+        </div>
+      </div>
+
+      <div class="barra-resultado">
+        <span id="oco-total" class="mono">—</span>
+        <button id="btn-exportar" class="botao" type="button" disabled>Exportar Excel</button>
+      </div>
+
+      <div class="rolagem">
+        <table id="tabela-oco" class="tabela">
+          <thead>
+            <tr><th>NF</th><th>Placa</th><th>Motivo</th><th>Vendedor</th><th class="num">Valor</th><th class="num">Peso</th><th>Registrado por</th><th>Data/hora</th></tr>
+          </thead>
+          <tbody><tr><td colspan="8" class="vazio">Escolha o período e clique em Atualizar.</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ---------- RETENÇÃO ---------- -->
+    <section class="vista" data-vista="retencao" hidden>
+      <h2 class="titulo">Retenção de motorista</h2>
+      <p class="apoio">Informe uma NF do veículo. O sistema descobre a placa e agrupa toda a carga atrelada a ela.</p>
+
+      <form id="form-retencao" class="barra-busca">
+        <input id="ret-nf" class="entrada entrada--mono" type="text" placeholder="Número da NF" autocomplete="off" required>
+        <button id="btn-ret-buscar" class="botao botao--principal" type="submit">Consultar carga</button>
+      </form>
+
+      <p id="ret-vazio" class="alerta" hidden></p>
+
+      <div id="resultado-retencao" hidden>
+        <div class="totais">
+          <div class="total total--destaque">
+            <span class="total__rotulo">Placa</span>
+            <strong id="ret-placa" class="total__valor mono"></strong>
+          </div>
+          <div class="total">
+            <span class="total__rotulo">Notas retidas</span>
+            <strong id="ret-qtd" class="total__valor mono"></strong>
+          </div>
+          <div class="total">
+            <span class="total__rotulo">Valor total</span>
+            <strong id="ret-valor" class="total__valor mono"></strong>
+          </div>
+          <div class="total">
+            <span class="total__rotulo">Peso total</span>
+            <strong id="ret-peso" class="total__valor mono"></strong>
+          </div>
+        </div>
+
+        <div class="rolagem">
+          <table id="ret-vendedores" class="tabela">
+            <thead>
+              <tr><th>Vendedor</th><th>E-mail</th><th class="num">NFs</th><th class="num">Valor</th><th class="num">Peso</th><th>Notas</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <div class="cartao">
+          <label class="rotulo" for="ret-motivo">Motivo da retenção (opcional)</label>
+          <input id="ret-motivo" class="entrada" type="text" maxlength="300" placeholder="Ex.: veículo retido por falta de documentação">
+          <div class="linha-botoes">
+            <button id="btn-gerar-retencao" class="botao botao--principal" type="button">Gerar retenção e abrir no Outlook</button>
+            <button id="btn-ret-copiar" class="botao botao--texto" type="button">Copiar e-mail como texto</button>
+          </div>
+        </div>
+
+        <div id="ret-pos-salvar" class="cartao cartao--sutil" hidden>
+          Retenção registrada no banco e rascunho enviado ao Outlook.
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

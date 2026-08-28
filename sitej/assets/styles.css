@@ -1,0 +1,298 @@
+/* ===========================================================================
+   Tokens
+   Verde-mate escuro para a estrutura, papel levemente esverdeado para o fundo,
+   âmbar reservado a retenção/alerta. Dados (NF, placa, valor, peso) sempre em
+   monoespaçada: são códigos e números que precisam alinhar coluna a coluna.
+   =========================================================================== */
+:root{
+  --tinta:#0F1E18;
+  --tinta-media:#4A5B53;
+  --erva:#1F6B4A;
+  --erva-escura:#14513A;
+  --papel:#F1F4F0;
+  --carta:#FFFFFF;
+  --linha:#D9E0D8;
+  --ambar:#B4700F;
+  --sangue:#A3271E;
+
+  --r:10px;
+  --sombra:0 1px 2px rgba(15,30,24,.06), 0 8px 24px -18px rgba(15,30,24,.5);
+  --fonte:"Archivo","Segoe UI",system-ui,sans-serif;
+  --mono:"IBM Plex Mono","Consolas","Courier New",monospace;
+}
+
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  font-family:var(--fonte);
+  background:var(--papel);
+  color:var(--tinta);
+  font-size:15px;
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+:focus-visible{outline:2px solid var(--erva);outline-offset:2px;border-radius:4px}
+
+/* --------------------------------------------------------------- Marca --- */
+.marca{
+  margin:0;
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--erva);
+}
+
+/* --------------------------------------------------------------- Login --- */
+.login{
+  min-height:100vh;
+  display:grid;
+  place-items:center;
+  padding:24px;
+  background:
+    radial-gradient(1100px 500px at 15% -10%, rgba(31,107,74,.10), transparent 60%),
+    var(--papel);
+}
+.login__cartao{
+  width:min(400px,100%);
+  background:var(--carta);
+  border:1px solid var(--linha);
+  border-radius:var(--r);
+  box-shadow:var(--sombra);
+  padding:36px 32px 28px;
+}
+.login__titulo{
+  font-size:26px;
+  line-height:1.2;
+  font-weight:600;
+  margin:10px 0 26px;
+  letter-spacing:-.02em;
+}
+
+/* ---------------------------------------------------- Topo e navegação --- */
+.topo{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  padding:14px 24px;
+  background:var(--carta);
+  border-bottom:1px solid var(--linha);
+}
+.topo__usuario{display:flex;align-items:center;gap:14px;font-size:13px;color:var(--tinta-media)}
+
+.nav{
+  display:flex;
+  gap:2px;
+  padding:0 16px;
+  background:var(--carta);
+  border-bottom:1px solid var(--linha);
+  overflow-x:auto;
+}
+.nav__item{
+  flex:0 0 auto;
+  display:flex;
+  flex-direction:column;
+  gap:1px;
+  padding:12px 18px 10px;
+  background:none;
+  border:0;
+  border-bottom:2px solid transparent;
+  font-family:inherit;
+  font-size:14px;
+  font-weight:600;
+  color:var(--tinta-media);
+  cursor:pointer;
+  text-align:left;
+}
+.nav__item small{font-size:11px;font-weight:400;letter-spacing:.02em;opacity:.75}
+.nav__item:hover{color:var(--tinta);background:rgba(31,107,74,.05)}
+.nav__item--ativo{color:var(--erva-escura);border-bottom-color:var(--erva)}
+
+/* ----------------------------------------------------------- Conteúdo --- */
+.conteudo{max-width:1160px;margin:0 auto;padding:28px 24px 72px}
+.titulo{font-size:20px;font-weight:600;letter-spacing:-.02em;margin:0 0 4px}
+.titulo--menor{font-size:16px;margin-bottom:14px}
+.apoio{color:var(--tinta-media);font-size:13.5px;margin:0 0 18px;max-width:70ch}
+
+.cartao{
+  background:var(--carta);
+  border:1px solid var(--linha);
+  border-radius:var(--r);
+  padding:20px;
+  margin-top:16px;
+}
+.cartao--sutil{background:rgba(31,107,74,.06);border-color:rgba(31,107,74,.2);font-size:13.5px}
+
+/* ------------------------------------------------------------ Campos ---- */
+.rotulo{
+  display:block;
+  font-size:11px;
+  font-weight:600;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--tinta-media);
+  margin:0 0 6px;
+}
+.entrada{
+  width:100%;
+  padding:10px 12px;
+  font-family:inherit;
+  font-size:14px;
+  color:var(--tinta);
+  background:var(--carta);
+  border:1px solid var(--linha);
+  border-radius:8px;
+  margin-bottom:16px;
+}
+.entrada--mono{font-family:var(--mono);letter-spacing:.04em}
+.entrada:focus{border-color:var(--erva);outline:none;box-shadow:0 0 0 3px rgba(31,107,74,.15)}
+select.entrada{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--tinta-media) 50%),linear-gradient(135deg,var(--tinta-media) 50%,transparent 50%);background-position:calc(100% - 18px) 19px,calc(100% - 13px) 19px;background-size:5px 5px;background-repeat:no-repeat;padding-right:36px}
+
+.botao{
+  padding:10px 18px;
+  font-family:inherit;
+  font-size:14px;
+  font-weight:600;
+  color:var(--tinta);
+  background:var(--carta);
+  border:1px solid var(--linha);
+  border-radius:8px;
+  cursor:pointer;
+  transition:background .15s,border-color .15s;
+}
+.botao:hover:not(:disabled){border-color:var(--erva);background:rgba(31,107,74,.06)}
+.botao:disabled{opacity:.45;cursor:not-allowed}
+.botao--principal{background:var(--erva);border-color:var(--erva);color:#fff;width:100%}
+.botao--principal:hover:not(:disabled){background:var(--erva-escura);border-color:var(--erva-escura)}
+.botao--texto{background:none;border-color:transparent;color:var(--erva);width:100%;padding:8px}
+.botao--texto:hover:not(:disabled){background:rgba(31,107,74,.08);border-color:transparent}
+.linha-botoes{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:6px}
+.linha-botoes .botao{width:auto}
+
+.erro{color:var(--sangue);font-size:13px;min-height:19px;margin:0 0 10px}
+.alerta{
+  background:#FFF6E8;
+  border:1px solid #F0D9AE;
+  border-left:3px solid var(--ambar);
+  border-radius:8px;
+  padding:12px 14px;
+  font-size:13.5px;
+  margin:16px 0 0;
+}
+
+/* ------------------------------------------------------- Barra de busca -- */
+.barra-busca{display:flex;gap:10px;align-items:flex-start;max-width:520px}
+.barra-busca .entrada{margin-bottom:0}
+.barra-busca .botao--principal{width:auto;flex:0 0 auto}
+
+/* ------------------------- Assinatura: canhoto da nota fiscal ----------- */
+.canhoto{
+  margin-top:20px;
+  background:var(--carta);
+  border:1px solid var(--linha);
+  border-radius:var(--r);
+  overflow:hidden;
+  box-shadow:var(--sombra);
+}
+.canhoto__cabeca{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:10px 18px;
+  background:var(--tinta);
+  color:#EAF0EC;
+  font-size:11px;
+  font-weight:600;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+.canhoto__selo{color:#8FBFA6}
+.canhoto__campos{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+  /* recorte serrilhado no rodapé: o papel picotado do canhoto */
+  padding:18px 18px 24px;
+  gap:2px 24px;
+  background:
+    linear-gradient(var(--carta),var(--carta)) padding-box,
+    repeating-linear-gradient(90deg,var(--linha) 0 6px,transparent 6px 12px) bottom/100% 1px no-repeat;
+}
+.campo{display:flex;flex-direction:column;padding:8px 0;border-bottom:1px dotted var(--linha)}
+.campo__rotulo{font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--tinta-media)}
+.campo__valor{font-size:14.5px;word-break:break-word}
+
+.grade-2{display:grid;grid-template-columns:1fr 1fr;gap:0 18px}
+
+/* --------------------------------------------------------- Dashboard ---- */
+.filtros{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:0 16px;
+  align-items:end;
+  background:var(--carta);
+  border:1px solid var(--linha);
+  border-radius:var(--r);
+  padding:18px 20px 4px;
+  margin:18px 0 16px;
+}
+.filtros__acoes{display:flex;gap:8px;margin-bottom:16px}
+.filtros__acoes .botao{width:auto;flex:1}
+.barra-resultado{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:10px;font-size:13px;color:var(--tinta-media)}
+
+.rolagem{overflow-x:auto;background:var(--carta);border:1px solid var(--linha);border-radius:var(--r)}
+.tabela{width:100%;border-collapse:collapse;font-size:13.5px}
+.tabela th{
+  position:sticky;top:0;
+  text-align:left;
+  padding:11px 14px;
+  background:#EDF1EC;
+  border-bottom:1px solid var(--linha);
+  font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--tinta-media);
+  white-space:nowrap;
+}
+.tabela td{padding:11px 14px;border-bottom:1px solid var(--linha);vertical-align:top}
+.tabela tbody tr:last-child td{border-bottom:0}
+.tabela tbody tr:hover{background:rgba(31,107,74,.045)}
+.tabela .num{text-align:right}
+.tabela--compacta{font-size:12.5px}
+.tabela--compacta td,.tabela--compacta th{padding:6px 10px}
+.linha--erro td{background:#FDECEA;color:var(--sangue)}
+.linha--apagada td{color:var(--tinta-media);opacity:.7}
+.vazio{padding:28px 14px;text-align:center;color:var(--tinta-media)}
+.nfs{max-width:280px;font-size:12px;color:var(--tinta-media)}
+.etiqueta{display:inline-block;padding:2px 8px;border-radius:999px;background:rgba(31,107,74,.1);color:var(--erva-escura);font-size:12px;font-weight:600;white-space:nowrap}
+.resumo{margin:4px 0 14px}
+.resumo-linha{font-size:13.5px;margin:0 0 10px}
+
+/* ---------------------------------------------------------- Retenção ---- */
+.totais{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin:20px 0 16px}
+.total{background:var(--carta);border:1px solid var(--linha);border-radius:var(--r);padding:14px 16px}
+.total--destaque{background:var(--tinta);border-color:var(--tinta);color:#EAF0EC}
+.total--destaque .total__rotulo{color:#8FBFA6}
+.total__rotulo{display:block;font-size:10.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--tinta-media)}
+.total__valor{display:block;font-size:20px;font-weight:600;margin-top:4px;letter-spacing:-.02em}
+
+/* ------------------------------------------------------------ Avisos ---- */
+.avisos{position:fixed;right:20px;bottom:20px;z-index:50;display:flex;flex-direction:column;gap:8px;max-width:380px}
+.aviso{
+  background:var(--tinta);color:#EAF0EC;
+  padding:12px 16px;border-radius:8px;font-size:13.5px;
+  box-shadow:0 12px 32px -12px rgba(15,30,24,.6);
+  animation:entrar .2s ease-out;
+}
+.aviso--ok{background:var(--erva-escura)}
+.aviso--erro{background:var(--sangue)}
+.aviso--saindo{opacity:0;transform:translateY(6px);transition:.25s}
+@keyframes entrar{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+@media (max-width:640px){
+  .conteudo{padding:20px 16px 60px}
+  .grade-2{grid-template-columns:1fr}
+  .barra-busca{flex-direction:column;align-items:stretch}
+  .barra-busca .botao--principal{width:100%}
+  .avisos{left:16px;right:16px;max-width:none}
+}

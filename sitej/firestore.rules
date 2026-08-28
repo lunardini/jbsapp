@@ -1,0 +1,46 @@
+rules_version = '2';
+
+// Cole em: Console Firebase > Firestore Database > Regras > Publicar.
+// Princípio: sem login não se lê nada; ocorrência e retenção são registros
+// históricos, então ninguém edita nem apaga pelo aplicativo.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function logado() {
+      return request.auth != null;
+    }
+
+    // Se quiser restringir ao domínio da empresa, troque por:
+    // return request.auth != null && request.auth.token.email.matches('.*@suaempresa[.]com[.]br');
+
+    // Notas importadas da planilha: qualquer usuário logado lê e regrava
+    // (a importação diária sobrescreve as notas do dia).
+    match /notas/{numeroNf} {
+      allow read, create, update: if logado();
+      allow delete: if false;
+    }
+
+    // Ocorrências: criação apenas em nome do próprio usuário; sem edição/exclusão.
+    match /ocorrencias/{id} {
+      allow read: if logado();
+      allow create: if logado()
+                    && request.resource.data.criadoPor.uid == request.auth.uid
+                    && request.resource.data.motivo is string
+                    && request.resource.data.numeroNf is string;
+      allow update, delete: if false;
+    }
+
+    // Retenções: mesma regra das ocorrências.
+    match /retencoes/{id} {
+      allow read: if logado();
+      allow create: if logado()
+                    && request.resource.data.criadoPor.uid == request.auth.uid;
+      allow update, delete: if false;
+    }
+
+    // Qualquer outra coleção fica bloqueada.
+    match /{documento=**} {
+      allow read, write: if false;
+    }
+  }
+}
