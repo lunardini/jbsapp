@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Retenção · Controle de Entregas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div id="carregando" class="carregando"><span class="carregando__pulso"></span>Verificando sessão…</div>
+
+<div class="casca" id="casca" hidden>
+  <aside class="lateral" id="lateral"></aside>
+
+  <div class="corpo">
+    <header class="topo-movel">
+      <button id="abrir-menu" class="botao botao--icone" type="button" aria-label="Abrir menu">☰</button>
+      <span class="topo-movel__titulo">Retenção</span>
+    </header>
+
+    <main class="pagina">
+      <div class="pagina__cabeca">
+        <div>
+          <p class="olho">Veículo parado</p>
+          <h1 class="pagina__titulo">Retenção de motorista</h1>
+          <p class="pagina__apoio">Informe uma NF do veículo. O sistema descobre a placa, agrupa toda a carga atrelada a ela e consolida valor, peso e vendedores envolvidos.</p>
+        </div>
+      </div>
+
+      <form id="form-ret" class="cartao">
+        <div class="cartao__corpo" style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
+          <div style="flex:1 1 260px">
+            <label class="rotulo" for="ret-nf">Número de uma NF do veículo</label>
+            <input id="ret-nf" class="entrada entrada--mono entrada--grande" type="text" placeholder="000000" autocomplete="off" required autofocus>
+          </div>
+          <button id="btn-ret-buscar" class="botao botao--principal" type="submit" style="padding:14px 26px">Consultar carga</button>
+        </div>
+      </form>
+
+      <section id="estado-inicial-ret" class="estado-vazio secao">
+        <svg class="estado-vazio__glifo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M3 13l2-5h14l2 5v6H3v-6z" stroke-linejoin="round"/>
+          <circle cx="7.5" cy="19" r="1.6"/><circle cx="16.5" cy="19" r="1.6"/>
+        </svg>
+        <h3>Uma NF basta</h3>
+        <p>A partir dela o sistema encontra a placa e puxa todas as outras notas da mesma carga, mesmo as que você não conhece.</p>
+      </section>
+
+      <p id="ret-vazio" class="alerta secao" hidden></p>
+
+      <div id="resultado-ret" hidden>
+        <div id="indicadores-ret" class="indicadores secao"></div>
+        <div id="ret-contexto" class="contexto"></div>
+
+        <section class="secao">
+          <div class="secao__titulo"><h2>Vendedores envolvidos</h2><small>ordenados por valor</small></div>
+          <div class="rolagem">
+            <table id="ret-vendedores" class="tabela">
+              <thead><tr><th>Vendedor</th><th>E-mail</th><th class="num">NFs</th><th class="num">Valor</th><th class="num">Peso</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="secao">
+          <div class="secao__titulo"><h2>Notas retidas</h2><small>toda a carga da placa</small></div>
+          <div class="rolagem">
+            <table id="ret-notas" class="tabela tabela--zebrada">
+              <thead><tr><th>NF</th><th>Cliente</th><th>Bairro / cidade</th><th class="num">Itens</th><th class="num">Valor</th><th class="num">Peso</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="cartao secao">
+          <div class="cartao__cabeca"><h3>Gerar retenção</h3><span class="pilula">registro em seu nome</span></div>
+          <div class="cartao__corpo">
+            <div class="campo-form">
+              <label class="rotulo" for="ret-motivo">Motivo da retenção</label>
+              <input id="ret-motivo" class="entrada" type="text" maxlength="300" placeholder="Ex.: veículo retido por falta de documentação">
+            </div>
+            <div class="duas-colunas">
+              <div class="campo-form">
+                <label class="rotulo" for="ret-para">Para</label>
+                <input id="ret-para" class="entrada mono" type="text">
+              </div>
+              <div class="campo-form">
+                <label class="rotulo" for="ret-cc">Cópia (Cc)</label>
+                <input id="ret-cc" class="entrada mono" type="text">
+              </div>
+            </div>
+            <div class="linha-botoes">
+              <button id="btn-gerar-ret" class="botao botao--principal" type="button">Gerar retenção e abrir no Outlook</button>
+              <button id="btn-ret-reabrir" class="botao botao--miudo" type="button">Reabrir rascunho</button>
+              <button id="btn-ret-copiar" class="botao botao--miudo" type="button">Copiar e-mail como texto</button>
+            </div>
+          </div>
+        </section>
+
+        <div id="pos-ret" class="cartao cartao--sutil secao" hidden>
+          <div class="cartao__corpo">Retenção registrada no banco e rascunho enviado ao Outlook.</div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<div id="avisos" class="avisos" aria-live="polite"></div>
+
+<script type="module">
+  import { iniciarPagina } from "./layout.js";
+  import { iniciarRetencao } from "./retencao.js";
+  iniciarPagina("retencao", iniciarRetencao);
+</script>
+</body>
+</html>

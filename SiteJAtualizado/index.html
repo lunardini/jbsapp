@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Entrar · Controle de Entregas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css"></head>
+<body>
+
+<div id="carregando" class="carregando"><span class="carregando__pulso"></span>Verificando sessão…</div>
+
+<main id="acesso" class="acesso" hidden>
+
+  <section class="acesso__vitrine">
+    <a class="marca marca--vitrine" href="index.html">
+      <svg viewBox="0 0 24 24" aria-hidden="true" class="marca__glifo">
+        <path d="M4 19c0-6 4-11 10-12-1.5 3-1 5-3 7s-4 2-4 5z" fill="currentColor" opacity=".85"/>
+        <path d="M4 19c3 0 5-1 7-3" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+      </svg>
+      <span>Controle de<br><strong>Entregas</strong></span>
+    </a>
+
+    <h1 class="acesso__frase">A ocorrência sai da rua e vira <em>registro</em> no mesmo minuto.</h1>
+
+    <ul class="acesso__lista">
+      <li><span class="acesso__numero">01</span><span><b>Importe a planilha</b>As notas do dia ficam disponíveis para todo o time.</span></li>
+      <li><span class="acesso__numero">02</span><span><b>Registre por item</b>Devolução, quebra e valor calculados linha a linha.</span></li>
+      <li><span class="acesso__numero">03</span><span><b>Avise o vendedor</b>O rascunho abre no Outlook já preenchido.</span></li>
+    </ul>
+  </section>
+
+  <section class="acesso__formulario">
+    <form id="form-login" class="acesso__caixa">
+      <p class="olho">Acesso restrito</p>
+      <h2 class="acesso__titulo">Entre para registrar as ocorrências do dia</h2>
+      <p class="acesso__apoio">Use o e-mail cadastrado pela equipe de TI. Não há autocadastro.</p>
+
+      <div class="campo-form">
+        <label class="rotulo" for="login-email">E-mail corporativo</label>
+        <input id="login-email" class="entrada" type="email" autocomplete="username" required autofocus>
+      </div>
+
+      <div class="campo-form">
+        <label class="rotulo" for="login-senha">Senha</label>
+        <input id="login-senha" class="entrada" type="password" autocomplete="current-password" required>
+      </div>
+
+      <p id="login-erro" class="erro" role="alert"></p>
+
+      <button id="btn-entrar" class="botao botao--principal botao--largo" type="submit">Entrar</button>
+      <button id="btn-esqueci" class="botao botao--largo" type="button" style="margin-top:10px">Esqueci minha senha</button>
+
+      <p class="acesso__rodape">Ocorrências e retenções ficam registradas com o nome de quem as criou.</p>
+    </form>
+  </section>
+
+</main>
+
+<script type="module">
+  import { iniciarLogin } from "./auth.js";
+  iniciarLogin();
+</script>
+</body>
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Importar · Controle de Entregas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+</head>
+<body>
+
+<div id="carregando" class="carregando"><span class="carregando__pulso"></span>Verificando sessão…</div>
+
+<div class="casca" id="casca" hidden>
+  <aside class="lateral" id="lateral"></aside>
+
+  <div class="corpo">
+    <header class="topo-movel">
+      <button id="abrir-menu" class="botao botao--icone" type="button" aria-label="Abrir menu">☰</button>
+      <span class="topo-movel__titulo">Importar</span>
+    </header>
+
+    <main class="pagina">
+      <div class="pagina__cabeca">
+        <div>
+          <p class="olho">Base do dia</p>
+          <h1 class="pagina__titulo">Importar planilha</h1>
+          <p class="pagina__apoio">Aceita .xlsx, .xls e .csv. A leitura acontece no seu computador; só os dados tratados vão para o banco. Como a planilha traz uma linha por item, o sistema agrupa as linhas da mesma NF antes de gravar.</p>
+        </div>
+      </div>
+
+      <div id="area-arquivo" class="area-arquivo">
+        <svg class="estado-vazio__glifo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin:0 auto">
+          <path d="M12 16V4m0 0L8 8m4-4l4 4" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M4 17v2a1 1 0 001 1h14a1 1 0 001-1v-2" stroke-linecap="round"/>
+        </svg>
+        <h3>Arraste a planilha aqui</h3>
+        <p>ou escolha o arquivo no computador</p>
+        <label class="rotulo-arquivo">
+          <span class="botao botao--principal">Selecionar arquivo</span>
+          <input id="arquivo" type="file" accept=".xlsx,.xls,.csv">
+        </label>
+        <div id="arquivo-info" class="arquivo-info" hidden>
+          <strong class="mono" id="arquivo-nome"></strong>
+          <span class="pilula" id="import-encontradas"></span>
+        </div>
+      </div>
+
+      <p id="import-erro" class="alerta alerta--erro secao" hidden></p>
+
+      <div id="import-resultado" hidden>
+        <section class="secao">
+          <div class="secao__titulo"><h2>O que o sistema leu</h2><small>confira antes de gravar</small></div>
+          <div id="import-cartoes" class="indicadores"></div>
+          <p id="import-nota-unidade" class="dica"></p>
+        </section>
+
+        <section class="secao duas-colunas">
+          <div class="cartao">
+            <div class="cartao__cabeca"><h3>Colunas reconhecidas</h3></div>
+            <div class="rolagem" style="border:0;box-shadow:none;border-radius:0">
+              <table class="tabela tabela--compacta">
+                <thead><tr><th>Campo do sistema</th><th>Coluna da planilha</th><th>Situação</th></tr></thead>
+                <tbody id="import-mapa"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="cartao">
+            <div class="cartao__cabeca"><h3>Amostra das notas</h3><span class="pilula">3 primeiras</span></div>
+            <div class="cartao__corpo" id="import-amostra"></div>
+          </div>
+        </section>
+
+        <section class="cartao secao">
+          <div class="cartao__corpo">
+            <div class="linha-botoes" style="justify-content:space-between">
+              <span class="dica" style="margin:0">Reimportar o mesmo arquivo atualiza as notas existentes, sem duplicar.</span>
+              <button id="btn-importar" class="botao botao--principal" type="button" disabled>Gravar no banco</button>
+            </div>
+            <div id="import-progresso" hidden>
+              <div class="progresso"><span id="barra-progresso" class="progresso__barra"></span></div>
+              <p id="texto-progresso" class="dica mono" style="margin:0"></p>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+</div>
+
+<div id="avisos" class="avisos" aria-live="polite"></div>
+
+<script type="module">
+  import { iniciarPagina } from "./layout.js";
+  import { iniciarImportacao } from "./importar.js";
+  iniciarPagina("importar", iniciarImportacao);
+</script>
+</body>
+</html>

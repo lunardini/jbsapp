@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Buscar NF · Controle de Entregas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div id="carregando" class="carregando"><span class="carregando__pulso"></span>Verificando sessão…</div>
+
+<div class="casca" id="casca" hidden>
+  <aside class="lateral" id="lateral"></aside>
+
+  <div class="corpo">
+    <header class="topo-movel">
+      <button id="abrir-menu" class="botao botao--icone" type="button" aria-label="Abrir menu">☰</button>
+      <span class="topo-movel__titulo">Buscar NF</span>
+    </header>
+
+    <main class="pagina">
+      <div class="pagina__cabeca">
+        <div>
+          <p class="olho">Operação do dia</p>
+          <h1 class="pagina__titulo">Buscar nota fiscal</h1>
+          <p class="pagina__apoio">Consulte a NF, confira a carga e registre a ocorrência item a item. O rascunho para o vendedor abre no Outlook assim que você salva.</p>
+        </div>
+        <button id="btn-nova-busca" class="botao botao--miudo" type="button">Nova consulta</button>
+      </div>
+
+      <form id="form-busca" class="cartao">
+        <div class="cartao__corpo" style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
+          <div style="flex:1 1 260px">
+            <label class="rotulo" for="busca-nf">Número da nota fiscal</label>
+            <input id="busca-nf" class="entrada entrada--mono entrada--grande" type="text"
+                   placeholder="000000" autocomplete="off" required autofocus>
+          </div>
+          <button id="btn-buscar" class="botao botao--principal" type="submit" style="padding:14px 26px">Buscar</button>
+        </div>
+      </form>
+
+      <!-- estado inicial ------------------------------------------------ -->
+      <section id="estado-inicial" class="estado-vazio secao">
+        <svg class="estado-vazio__glifo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M11 4a7 7 0 105.2 11.7l3.8 3.8" stroke-linecap="round"/>
+        </svg>
+        <h3>Comece pelo número da NF</h3>
+        <p>A busca lê direto o documento da nota, então o resultado é imediato. Se a NF não aparecer, provavelmente a planilha do dia ainda não foi importada.</p>
+      </section>
+
+      <p id="busca-vazio" class="alerta secao" hidden>
+        NF <span id="busca-vazio-nf" class="mono"></span> não está na base. Confira o número ou importe a planilha do dia em <a href="importar.html">Importar</a>.
+      </p>
+
+      <!-- resultado ----------------------------------------------------- -->
+      <div id="resultado" hidden>
+
+        <article class="canhoto secao">
+          <header class="canhoto__cabeca">
+            <span>Nota localizada</span>
+            <span class="canhoto__selo">base do dia</span>
+          </header>
+          <div id="nota-campos" class="canhoto__campos"></div>
+        </article>
+
+        <form id="form-ocorrencia">
+          <section class="cartao secao">
+            <div class="cartao__cabeca">
+              <h3>Registrar ocorrência</h3>
+              <span class="pilula">o registro fica no seu nome</span>
+            </div>
+            <div class="cartao__corpo">
+              <div class="duas-colunas">
+                <div class="campo-form">
+                  <label class="rotulo" for="oco-motivo">Motivo</label>
+                  <select id="oco-motivo" class="entrada" required></select>
+                </div>
+                <div class="campo-form">
+                  <label class="rotulo" for="oco-obs">Observação</label>
+                  <input id="oco-obs" class="entrada" type="text" maxlength="300" placeholder="Detalhe o que aconteceu (opcional)">
+                </div>
+                <div class="campo-form">
+                  <label class="rotulo" for="oco-para">E-mail do vendedor (Para)</label>
+                  <input id="oco-para" class="entrada mono" type="text" placeholder="vendedor@empresa.com.br">
+                </div>
+                <div class="campo-form">
+                  <label class="rotulo" for="oco-cc">Cópia (Cc)</label>
+                  <input id="oco-cc" class="entrada mono" type="text" placeholder="logistica@empresa.com.br">
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- grade de itens ------------------------------------------- -->
+          <section id="bloco-itens" class="secao" hidden>
+            <div class="secao__titulo">
+              <h2>Itens da nota</h2>
+              <small id="dica-regra">Informe os itens afetados.</small>
+            </div>
+
+            <div class="rolagem">
+              <table class="tabela tabela--zebrada grade-itens">
+                <thead>
+                  <tr>
+                    <th>Código</th>
+                    <th>Item</th>
+                    <th class="num">Peso líq. (kg)</th>
+                    <th class="num">Devolvido</th>
+                    <th class="num">Quebra</th>
+                    <th class="num">Vl. unitário</th>
+                    <th class="num">Vl. devolvido</th>
+                  </tr>
+                </thead>
+                <tbody id="itens-corpo"></tbody>
+              </table>
+            </div>
+
+            <div class="totalizador">
+              <div class="totalizador__grupo">
+                <span class="totalizador__item">
+                  <span class="totalizador__rotulo">Itens afetados</span>
+                  <span id="total-itens" class="totalizador__valor">0</span>
+                </span>
+                <span class="totalizador__item">
+                  <span class="totalizador__rotulo">Quantidade</span>
+                  <span id="total-qtd" class="totalizador__valor">0</span>
+                </span>
+                <span class="totalizador__item">
+                  <span class="totalizador__rotulo">Peso devolvido</span>
+                  <span id="total-peso" class="totalizador__valor">0,00 kg</span>
+                </span>
+                <span class="totalizador__item">
+                  <span class="totalizador__rotulo">Valor devolvido</span>
+                  <span id="total-valor" class="totalizador__valor">R$ 0,00</span>
+                </span>
+              </div>
+              <button id="btn-salvar" class="botao botao--principal" type="submit">Salvar e abrir no Outlook</button>
+            </div>
+          </section>
+
+          <section id="itens-dispensados" class="cartao cartao--sutil secao" hidden>
+            <div class="cartao__corpo" style="display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between">
+              <span id="texto-dispensados">Este motivo não exige detalhamento por item.</span>
+              <button class="botao botao--principal" type="submit">Salvar e abrir no Outlook</button>
+            </div>
+          </section>
+        </form>
+
+        <div id="pos-salvar" class="cartao cartao--sutil secao" hidden>
+          <div class="cartao__corpo">
+            <p style="margin:0 0 4px"><strong>Ocorrência registrada.</strong> Rascunho enviado ao Outlook.</p>
+            <p id="pos-salvar-resumo" class="mono apagado" style="margin:0 0 12px;font-size:13px"></p>
+            <div class="linha-botoes">
+              <button id="btn-reabrir" class="botao botao--miudo" type="button">Reabrir no Outlook</button>
+              <button id="btn-copiar" class="botao botao--miudo" type="button">Copiar e-mail como texto</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+</div>
+
+<div id="avisos" class="avisos" aria-live="polite"></div>
+
+<script type="module">
+import { iniciarPagina } from "./layout.js";
+import { iniciarBusca } from "./nota.js";
+  iniciarPagina("buscar", iniciarBusca);
+</script>
+</body>
+</html>
